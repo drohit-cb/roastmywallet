@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useSignMessage, useAccount } from 'wagmi';
+import { createSiweMessage } from 'viem/siwe';
+import { base } from 'wagmi/chains';
 
 interface RoastDisplayProps {
   isConnected: boolean;
@@ -11,10 +14,31 @@ interface RoastDisplayProps {
 
 export function RoastDisplay({ isConnected, isLoading, roastText, onGenerate }: RoastDisplayProps) {
   const [isMinting, setIsMinting] = useState(false);
+  const { signMessage } = useSignMessage();
+  const { address } = useAccount();
 
   if (!isConnected) {
     return null;
   }
+
+  const handleGenerate = async () => {
+    try {
+      const message = createSiweMessage({
+        domain: window.location.host,
+        address: address as `0x${string}`,
+        chainId: base.id,
+        uri: window.location.origin,
+        version: '1',
+        nonce: Date.now().toString(),
+        statement: 'Sign in to roast your wallet. By signing, you agree to our terms and conditions.',
+      });
+
+      await signMessage({ message });
+      onGenerate();
+    } catch (error) {
+      console.error('Failed to sign message:', error);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -47,10 +71,10 @@ export function RoastDisplay({ isConnected, isLoading, roastText, onGenerate }: 
         </>
       ) : (
         <button
-          onClick={onGenerate}
+          onClick={handleGenerate}
           className="w-full py-4 bg-gradient-to-r from-pink-500 to-violet-500 rounded-lg font-bold text-xl hover:opacity-90"
         >
-          Generate Roast 🔥
+          Sign to Generate Roast 🔥
         </button>
       )}
     </div>

@@ -15,7 +15,7 @@ import {
 
 export function WalletConnect() {
   return (
-    <div className="flex justify-end p-4">
+    <div className="flex justify-end p-4">  
       <Wallet>
         <ConnectWallet>
           <Avatar className="h-6 w-6" />
