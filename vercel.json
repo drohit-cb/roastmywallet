@@ -12,10 +12,5 @@
         { "key": "Access-Control-Allow-Methods", "value": "GET,POST" }
       ]
     }
-  ],
-  "env": {
-    "NEXT_PUBLIC_ONCHAINKIT_API_KEY": "@NEXT_PUBLIC_ONCHAINKIT_API_KEY",
-    "IRON_PASSWORD": "@IRON_PASSWORD",
-    "MAINNET_RPC_URL": "@MAINNET_RPC_URL"
-  }
+  ]
 } 
