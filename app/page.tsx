@@ -47,12 +47,12 @@ export default function Home() {
   const isAuthenticated = isConnected && isSignedIn;
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white">
       <nav className="p-4">
         {isAuthenticated && <WalletConnect />}
       </nav>
       
-      <div className="container mx-auto px-4 py-16">
+      <main className="container mx-auto px-4 py-16">
         <h1 className="text-6xl font-bold text-center mb-8">
           Roast My <span className="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">Wallet</span>
         </h1>
@@ -74,7 +74,7 @@ export default function Home() {
             </>
           )}
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
