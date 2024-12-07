@@ -1,43 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RoastMyWallet
 
-## Getting Started
+A fun dApp that roasts your wallet based on your on-chain activity.
 
-First, run the development server:
+## Features
+- Wallet connection using OnchainKit
+- Sign-In with Ethereum (SIWE) authentication
+- Iron Session for secure session management
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Tech Stack
+- Next.js 15 (App Router)
+- OnchainKit for wallet interactions
+- SIWE for authentication
+- Iron Session for session management
+- TailwindCSS for styling
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup
+1. Clone the repository
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. Install dependencies:
+    ```bash
+    yarn install
+    ```
+3. Create `.env.local`:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+    NEXT_PUBLIC_ONCHAINKIT_API_KEY=<your-api-key>
+    IRON_PASSWORD=<your-iron-password>
+    MAINNET_RPC_URL=<your-mainnet-rpc-url>
 
-## Learn More
+4. Run development server:
+    ```bash
+    yarn dev
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+6. You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+Deployed on Vercel with the following environment variables:
+- `NEXT_PUBLIC_ONCHAINKIT_API_KEY`
+- `IRON_PASSWORD`
+- `MAINNET_RPC_URL`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## TODO / Next Steps
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Features
+- [ ] Implement actual wallet analytics
+- [ ] Integrate with a LLM to power roast generation
+- [ ] Add NFT minting capability
+- [ ] Build leaderboard for top roasts
+- [ ] Add social sharing functionality
 
+### Technical Improvements
+- [ ] Add proper error handling for wallet connections
+- [ ] Implement persistent sessions
+- [ ] Add loading states and better UX
 
-## Issues
+### Known Issues
+- Session persistence needs improvement
+- SIWE implementation needs refinement
+- Better error handling needed for RPC failures
 
-- If something fails with SIWE sign in, show some modal ?
-- siwe - nonce invalidation checks ?
-- 
+## Contributing
+PRs and Issues welcome!
