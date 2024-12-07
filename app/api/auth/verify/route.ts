@@ -1,4 +1,3 @@
-import { SiweMessage } from 'siwe';
 import { createPublicClient, http } from 'viem'
 import { mainnet, base, Chain } from 'viem/chains'
 

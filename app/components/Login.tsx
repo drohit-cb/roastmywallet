@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAccount, useSignMessage, useDisconnect, usePublicClient } from 'wagmi';
 import { SiweMessage } from 'siwe';
 import { ConnectWallet, Wallet } from '@coinbase/onchainkit/wallet';
@@ -75,7 +75,11 @@ export function Login({ onLoginComplete }: LoginProps) {
     <div className="flex flex-col items-center gap-6">
       <div className="text-center">
         <h2 className="text-2xl font-bold mb-2">Welcome to RoastMyWallet</h2>
-        <p className="text-gray-400">Connect your wallet to start getting roasted</p>
+        <p className="text-gray-400">
+          {isSigningIn 
+            ? 'Signing in...' 
+            : 'Connect your wallet to start getting roasted'}
+        </p>
       </div>
 
       <Wallet>
@@ -83,7 +87,7 @@ export function Login({ onLoginComplete }: LoginProps) {
       </Wallet>
 
       <p className="text-sm text-gray-400 max-w-md text-center">
-        By connecting, you'll sign a message to verify wallet ownership. 
+        By connecting, you will sign a message to verify wallet ownership. 
         No transaction fees involved.
       </p>
     </div>
