@@ -72,7 +72,7 @@ export function Login({ onLoginComplete }: LoginProps) {
   };
 
   return (
-    <div className="flex flex-col items-center gap-6">
+    <div className="flex flex-col items-center gap-6" role="main">
       <div className="text-center">
         <h2 className="text-2xl font-bold mb-2">Welcome to RoastMyWallet</h2>
         <p className="text-gray-400">
@@ -83,10 +83,13 @@ export function Login({ onLoginComplete }: LoginProps) {
       </div>
 
       <Wallet>
-        <ConnectWallet onConnect={handleSIWE} />
+        <ConnectWallet 
+          onConnect={handleSIWE}
+          aria-label="Connect Wallet"
+        />
       </Wallet>
 
-      <p className="text-sm text-gray-400 max-w-md text-center">
+      <p className="text-sm text-gray-400 max-w-md text-center" aria-live="polite">
         By connecting, you will sign a message to verify wallet ownership. 
         No transaction fees involved.
       </p>
