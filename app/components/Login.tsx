@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAccount, useSignMessage, useDisconnect } from 'wagmi';
-import { createSiweMessage } from 'viem/siwe';
-import { base } from 'wagmi/chains';
+import { useAccount, useSignMessage, useDisconnect, usePublicClient } from 'wagmi';
+import { SiweMessage } from 'siwe';
 import { ConnectWallet, Wallet } from '@coinbase/onchainkit/wallet';
 
 interface LoginProps {
@@ -11,40 +10,61 @@ interface LoginProps {
 }
 
 export function Login({ onLoginComplete }: LoginProps) {
-  const { isConnected, address } = useAccount();
-  const { signMessage } = useSignMessage();
+  const account = useAccount();
+  const { isConnected, address, } = useAccount();
+  const { signMessageAsync } = useSignMessage();
   const { disconnect } = useDisconnect();
   const [isSigningIn, setIsSigningIn] = useState(false);
-  const [hasError, setHasError] = useState(false);
-
-  // Watch for wallet connection and trigger SIWE
-  useEffect(() => {
-    if (isConnected && address && !isSigningIn) {
-      handleSIWE();
-    }
-  }, [isConnected, address]);
+  const publicClient = usePublicClient();
+  if (!publicClient) {
+    throw new Error('Public client not found');
+  }
 
   const handleSIWE = async () => {
     if (!isConnected || !address) return;
     
     setIsSigningIn(true);
     try {
-      const message = createSiweMessage({
+      // Get nonce
+      const nonceRes = await fetch('/api/auth/nonce');
+      const nonce = await nonceRes.text();
+      
+      const message = new SiweMessage({
         domain: window.location.host,
         address: address as `0x${string}`,
-        chainId: base.id,
+        chainId: account.chainId,
         uri: window.location.origin,
         version: '1',
-        nonce: Date.now().toString(),
+        nonce,
         statement: 'Sign in to RoastMyWallet. By signing, you are proving you own this wallet and logging in. This does not initiate a transaction or cost any fees.',
       });
 
-      await signMessage({ message });
-      console.log('SIWE successful, calling onLoginComplete');
+      const messageToSign = message.prepareMessage();
+      
+      // Sign message
+      const signature = await signMessageAsync({ 
+        message: messageToSign
+      });  
+
+      const verifyRes = await fetch('/api/auth/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chainId: account.chainId,
+          address: address,
+          message: messageToSign,
+          signature: signature,
+        }),
+      });
+
+      const verifyData = await verifyRes.json();
+      if (!verifyRes.ok || !verifyData.ok) {
+        throw new Error(verifyData.error || 'Error verifying message');
+      }
+
       onLoginComplete();
-      console.log('onLoginComplete called');
     } catch (error) {
-      console.error('Failed to sign message:', error);
+      console.error('Failed to sign and verify message:', error);
       disconnect();
     } finally {
       setIsSigningIn(false);
@@ -58,18 +78,9 @@ export function Login({ onLoginComplete }: LoginProps) {
         <p className="text-gray-400">Connect your wallet to start getting roasted</p>
       </div>
 
-      {hasError ? (
-        <button 
-          onClick={() => window.location.reload()}
-          className="px-8 py-4 bg-gradient-to-r from-pink-500 to-violet-500 rounded-lg font-bold text-xl hover:opacity-90 text-white"
-        >
-          Reload to Connect Wallet
-        </button>
-      ) : (
-        <Wallet>
-          <ConnectWallet />
-        </Wallet>
-      )}
+      <Wallet>
+        <ConnectWallet onConnect={handleSIWE} />
+      </Wallet>
 
       <p className="text-sm text-gray-400 max-w-md text-center">
         By connecting, you'll sign a message to verify wallet ownership. 

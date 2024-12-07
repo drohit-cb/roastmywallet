@@ -17,11 +17,25 @@ export default function Home() {
   const { isConnected } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
   const [roastText, setRoastText] = useState<string>();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
+  // Check SIWE session on load
   useEffect(() => {
-    console.log('Auth state:', { isConnected, isLoggedIn });
-  }, [isConnected, isLoggedIn]);
+    const checkSession = async () => {
+      try {
+        const res = await fetch('/api/auth/session');
+        const { isValid } = await res.json();
+        setIsSignedIn(isValid);
+      } catch (error) {
+        console.error('Failed to check session:', error);
+        setIsSignedIn(false);
+      }
+    };
+
+    if (isConnected) {
+      checkSession();
+    }
+  }, [isConnected]);
 
   const generateRoast = async () => {
     setIsLoading(true);
@@ -30,7 +44,7 @@ export default function Home() {
     setIsLoading(false);
   };
 
-  const isAuthenticated = isConnected && isLoggedIn;
+  const isAuthenticated = isConnected && isSignedIn;
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white">
@@ -45,7 +59,7 @@ export default function Home() {
         
         <div className="max-w-2xl mx-auto bg-gray-800/50 rounded-xl p-8 backdrop-blur-sm">
           {!isAuthenticated ? (
-            <Login onLoginComplete={() => setIsLoggedIn(true)} />
+            <Login onLoginComplete={() => setIsSignedIn(true)} />
           ) : (
             <>
               <p className="text-xl text-center text-gray-400 mb-8">
