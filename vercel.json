@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "buildCommand": "yarn build",
+  "installCommand": "yarn install",
+  "framework": "nextjs",
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Credentials", "value": "true" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,POST" }
+      ]
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_ONCHAINKIT_API_KEY": "@NEXT_PUBLIC_ONCHAINKIT_API_KEY",
+    "IRON_PASSWORD": "@IRON_PASSWORD",
+    "MAINNET_RPC_URL": "@MAINNET_RPC_URL"
+  }
+} 
