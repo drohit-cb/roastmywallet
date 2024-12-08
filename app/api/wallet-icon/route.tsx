@@ -2,7 +2,7 @@ import { ImageResponse } from '@vercel/og';
 
 export const runtime = 'edge';
 
-export const size = {
+const size = {
   width: 48,
   height: 48,
 };
@@ -28,7 +28,8 @@ export async function GET() {
       </div>
     ),
     {
-      ...size
+      width: size.width,
+      height: size.height
     }
   );
 } 

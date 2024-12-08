@@ -1,6 +1,6 @@
 export default function Privacy() {
   const privacy = {
-    lastUpdated: "2024-01-01",
+    lastUpdated: "2024-12-08",
     policies: [
       {
         title: "1. Data Collection",
