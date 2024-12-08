@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@coinbase/onchainkit": "^0.35.8",
+    "@vercel/og": "^0.6.4",
     "ethers": "^6.13.4",
     "iron-session": "^8.0.4",
     "next": "15.0.3",
