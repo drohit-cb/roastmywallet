@@ -5,11 +5,11 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'RoastMyWallet - Get Your Wallet Roasted',
-  description: 'A fun dApp that roasts your wallet based on your on-chain activity.',
+  description: 'RoastMyWallet is a fun dApp that analyzes your on-chain activity and generates witty, personalized roasts about your trading habits, NFT collections, and wallet behavior. Connect your wallet and get roasted!',
   keywords: 'web3, crypto, wallet, ethereum, base, nft, blockchain',
   openGraph: {
     title: 'RoastMyWallet',
-    description: 'Get your crypto wallet roasted based on your on-chain activity',
+    description: 'RoastMyWallet is a fun dApp that analyzes your on-chain activity and generates witty, personalized roasts about your trading habits, NFT collections, and wallet behavior. Connect your wallet and get roasted!',
     url: 'https://roastwallet.xyz',
     siteName: 'RoastMyWallet',
     images: [
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'RoastMyWallet',
-    description: 'Get your crypto wallet roasted based on your on-chain activity',
+    description: 'RoastMyWallet is a fun dApp that analyzes your on-chain activity and generates witty, personalized roasts about your trading habits, NFT collections, and wallet behavior. Connect your wallet and get roasted!',
     images: ['/api/og'],
   },
   robots: {
