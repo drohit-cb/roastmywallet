@@ -5,21 +5,23 @@ import { OnchainKitProvider } from '@coinbase/onchainkit';
 import { base } from 'wagmi/chains';
  
 export function Providers(props: { children: ReactNode }) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+
   return (
     <OnchainKitProvider
       apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY}
-      chain={base} // add baseSepolia for testing
+      chain={base}
       config={{
         appearance: {
-          name: 'RoastMyWallet',        // Displayed in modal header
-          logo: 'https://your-logo.com',// Displayed in modal header
-          mode: 'auto',                 // 'light' | 'dark' | 'auto'
-          theme: 'default',             // 'default' or custom theme
+          name: 'RoastMyWallet',
+          logo: `${baseUrl}/api/wallet-icon`,
+          mode: 'dark',
+          theme: 'default',
         },
         wallet: { 
-          display: 'modal', 
-          termsUrl: 'https://...', 
-          privacyUrl: 'https://...', 
+          display: 'modal',
+          termsUrl: '/terms',
+          privacyUrl: '/privacy',
         },
       }}
     >
