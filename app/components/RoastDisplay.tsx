@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { ShareButton } from './ShareButton';
 
 interface RoastDisplayProps {
   isConnected: boolean;
@@ -33,22 +34,19 @@ export function RoastDisplay({ isConnected, isLoading, roastText, onGenerate }: 
             <button
               onClick={() => setIsMinting(true)}
               disabled={isMinting}
-              className="px-6 py-2 bg-gradient-to-r from-pink-500 to-violet-500 rounded-full font-semibold hover:opacity-90 disabled:opacity-50"
+              className="px-12 py-3 bg-gradient-to-r from-pink-500 to-violet-500 rounded-full font-semibold hover:opacity-90 disabled:opacity-50 text-lg"
             >
-              {isMinting ? 'Minting...' : 'Mint as NFT'}
+              Mint as NFT
             </button>
             
-            <button
-              className="px-6 py-2 bg-gray-700 rounded-full font-semibold hover:bg-gray-600"
-            >
-              Share 🐦
-            </button>
+            <ShareButton roastText={roastText} />
           </div>
         </>
       ) : (
         <button
           onClick={onGenerate}
-          className="w-full py-4 bg-gradient-to-r from-pink-500 to-violet-500 rounded-lg font-bold text-xl hover:opacity-90"
+          disabled={isLoading}
+          className="w-full py-4 bg-gradient-to-r from-pink-500 to-violet-500 rounded-lg font-bold text-xl hover:opacity-90 disabled:opacity-50"
         >
           Generate Roast 🔥
         </button>
