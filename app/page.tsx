@@ -5,16 +5,10 @@ import { RoastDisplay } from './components/RoastDisplay';
 import { WalletConnect } from './components/WalletConnect';
 import { useAccount } from 'wagmi';
 import { useState, useEffect, useCallback } from 'react';
-
-const MOCK_ROASTS = [
-  "Bro's wallet is so inactive, even his dust is collecting dust 💤",
-  "Trading like a drunk monkey with a dartboard would've given better returns 🎯",
-  "Your portfolio is more volatile than my ex's mood swings 📈📉",
-  "Paper hands so weak they make tissue paper look strong 🧻",
-];
+import { getMockWalletStats } from '@/lib/mockWalletStats';
 
 export default function Home() {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
   const [roastText, setRoastText] = useState<string>();
   const [isSignedIn, setIsSignedIn] = useState(false);
@@ -48,9 +42,26 @@ export default function Home() {
 
   const generateRoast = async () => {
     setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setRoastText(MOCK_ROASTS[Math.floor(Math.random() * MOCK_ROASTS.length)]);
-    setIsLoading(false);
+    try {
+      // 1. Get wallet stats
+      const walletStats = await getMockWalletStats(address!);
+      
+      // 2. Generate roast
+      const response = await fetch('/api/generate-roast', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ walletStats }),
+      });
+      
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
+      
+      setRoastText(data.roast);
+    } catch (error) {
+      console.error('Failed to generate roast:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const isAuthenticated = isConnected && isSignedIn;
