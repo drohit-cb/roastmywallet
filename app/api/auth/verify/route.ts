@@ -1,5 +1,10 @@
 import { createPublicClient, http } from 'viem'
 import { mainnet, base, Chain } from 'viem/chains'
+import { getIronSession } from 'iron-session';
+import { cookies } from 'next/headers';
+import { SiweMessage } from 'siwe';
+import { ironOptions } from '@/app/config/iron-session';
+import { SessionData } from '@/types/session';
 
 function getChainById(chainId: number): Chain | undefined {
   if (chainId === 1) {
@@ -24,7 +29,10 @@ function getChainById(chainId: number): Chain | undefined {
 export async function POST(req: Request) {
   try {
     const { chainId, address, message, signature } = await req.json();
+    const cookieStore = await cookies();
+    const session = await getIronSession<SessionData>(cookieStore, ironOptions);
 
+    // First verify message with viem
     const chain = getChainById(chainId);
     if (!chain) {
       return Response.json({ ok: false, error: 'Unsupported chain' });
@@ -40,7 +48,14 @@ export async function POST(req: Request) {
       message: message,
       signature: signature as `0x${string}`,
     })
-    
+
+    if (isValid) {
+      // Parse and save SIWE message
+      const siweMessage = new SiweMessage(message);
+      session.siwe = siweMessage;
+      await session.save();
+    }
+
     return Response.json({ ok: isValid });
   } catch (error) {
     console.error('Verification error:', error);
