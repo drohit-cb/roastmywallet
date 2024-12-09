@@ -4,7 +4,7 @@ import { Login } from './components/Login';
 import { RoastDisplay } from './components/RoastDisplay';
 import { WalletConnect } from './components/WalletConnect';
 import { useAccount } from 'wagmi';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 const MOCK_ROASTS = [
   "Bro's wallet is so inactive, even his dust is collecting dust 💤",
@@ -18,6 +18,15 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [roastText, setRoastText] = useState<string>();
   const [isSignedIn, setIsSignedIn] = useState(false);
+
+  const handleDisconnect = useCallback(async () => {
+    // Reset all states
+    setIsSignedIn(false);
+    setRoastText(undefined);
+    setIsLoading(false);
+    // Call logout API
+    await fetch('/api/auth/logout', { method: 'POST' });
+  }, []);
 
   // Check SIWE session on load
   useEffect(() => {
@@ -49,7 +58,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white">
       <nav className="p-4">
-        {isAuthenticated && <WalletConnect />}
+        {isAuthenticated && <WalletConnect onDisconnect={handleDisconnect} />}
       </nav>
       
       <main className="container mx-auto px-4 py-16">

@@ -3,8 +3,7 @@
 import { 
   ConnectWallet, 
   Wallet, 
-  WalletDropdown, 
-  WalletDropdownDisconnect 
+  WalletDropdown,
 } from '@coinbase/onchainkit/wallet';
 import {
   Address,
@@ -12,10 +11,11 @@ import {
   Name,
   Identity,
 } from '@coinbase/onchainkit/identity';
+import { CustomWalletDropdownDisconnect } from './CustomWalletDropdownDisconnect';
 
-export function WalletConnect() {
+export function WalletConnect({ onDisconnect }: { onDisconnect: () => Promise<void> }) {
   return (
-    <div className="flex justify-end p-4">  
+    <div className="flex justify-end p-4">
       <Wallet>
         <ConnectWallet>
           <Avatar className="h-6 w-6" />
@@ -27,7 +27,7 @@ export function WalletConnect() {
             <Name />
             <Address />
           </Identity>
-          <WalletDropdownDisconnect />
+          <CustomWalletDropdownDisconnect onDisconnect={onDisconnect} />
         </WalletDropdown>
       </Wallet>
     </div>
