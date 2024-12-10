@@ -6,7 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "contract:compile": "yarn hardhat compile",
+    "contract:clean": "yarn hardhat clean",
+    "contract:test": "yarn hardhat test",
+    "contract:coverage": "yarn hardhat coverage",
+    "deploy:sepolia": "yarn hardhat run scripts/deploy.ts --network base-sepolia",
+    "verify:sepolia": "yarn hardhat verify --network base-sepolia"
   },
   "dependencies": {
     "@coinbase/onchainkit": "^0.35.8",
@@ -17,17 +23,36 @@
     "openai": "^4.76.0",
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106",
+    "react-hot-toast": "^2.4.1",
     "siwe": "^2.3.2"
   },
   "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.8",
+    "@nomicfoundation/hardhat-ethers": "^3.0.8",
+    "@nomicfoundation/hardhat-ignition": "^0.15.8",
+    "@nomicfoundation/hardhat-ignition-ethers": "^0.15.8",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.12",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@nomicfoundation/hardhat-verify": "^2.0.12",
+    "@openzeppelin/contracts": "^5.1.0",
+    "@typechain/ethers-v6": "^0.5.1",
+    "@typechain/hardhat": "^9.1.0",
+    "@types/mocha": "^10.0.10",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "chai": "4",
+    "dotenv": "^16.4.7",
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
+    "hardhat": "^2.22.17",
+    "hardhat-gas-reporter": "^2.2.2",
     "pino-pretty": "^13.0.0",
     "postcss": "^8",
+    "solidity-coverage": "^0.8.14",
     "tailwindcss": "^3.4.1",
+    "ts-node": "^10.9.2",
+    "typechain": "^8.3.2",
     "typescript": "^5"
   }
 }

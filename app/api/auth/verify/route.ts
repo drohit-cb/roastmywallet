@@ -1,5 +1,5 @@
 import { createPublicClient, http } from 'viem'
-import { mainnet, base, Chain } from 'viem/chains'
+import { mainnet, base, baseSepolia, Chain } from 'viem/chains'
 import { getIronSession } from 'iron-session';
 import { cookies } from 'next/headers';
 import { SiweMessage } from 'siwe';
@@ -21,8 +21,9 @@ function getChainById(chainId: number): Chain | undefined {
 
   const supportedChains: Record<number, Chain> = {
     [base.id]: base,
+    [baseSepolia.id]: baseSepolia,
   }
-  
+
   return supportedChains[chainId];
 }
 
@@ -59,9 +60,9 @@ export async function POST(req: Request) {
     return Response.json({ ok: isValid });
   } catch (error) {
     console.error('Verification error:', error);
-    return Response.json({ 
-      ok: false, 
-      error: error instanceof Error ? error.message : 'Invalid signature' 
+    return Response.json({
+      ok: false,
+      error: error instanceof Error ? error.message : 'Invalid signature'
     });
   }
 } 

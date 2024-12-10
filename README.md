@@ -64,3 +64,38 @@ Deployed on Vercel with the following environment variables:
 
 ## Contributing
 PRs and Issues welcome!
+
+## Contract Interaction (Using Cast)
+You can interact with the deployed contract using the following cast commands. Make sure you have [Foundry](https://book.getfoundry.sh/) installed.
+
+### Read Functions
+
+Get a specific roast:
+```bash
+cast call <CONTRACT_ADDRESS> "getRoast(uint256)(tuple(uint256,address,uint256,string,uint256))" <TOKEN_ID> --rpc-url https://sepolia.base.org
+```
+
+Get top roasts:
+```bash
+cast call <CONTRACT_ADDRESS> "getTopRoasts(uint256)(tuple(uint256,address,uint256,string,uint256)[])" <LIMIT> --rpc-url https://sepolia.base.org
+```
+
+### Write Functions
+
+Mint a new roast:
+```bash
+cast send <CONTRACT_ADDRESS> "mintRoast(string)" "your roast text here" --rpc-url https://sepolia.base.org --private-key <YOUR_PRIVATE_KEY>
+```
+
+Like a roast:
+```bash
+cast send <CONTRACT_ADDRESS> "likeRoast(uint256)" <TOKEN_ID> --rpc-url https://sepolia.base.org --private-key <YOUR_PRIVATE_KEY>
+```
+
+Replace:
+- `<CONTRACT_ADDRESS>` with the deployed contract address
+- `<TOKEN_ID>` with the ID of the roast
+- `<LIMIT>` with how many top roasts to retrieve
+- `<YOUR_PRIVATE_KEY>` with your wallet's private key (never share this!)
+
+Note: For write functions (mintRoast and likeRoast), you'll need Base Sepolia testnet ETH. Get some from the [Base Sepolia faucet](https://portal.cdp.coinbase.com/products/faucet).

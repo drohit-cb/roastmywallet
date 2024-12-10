@@ -2,6 +2,11 @@
 
 import { useState } from 'react';
 import { ShareButton } from './ShareButton';
+import { MintButton } from './MintButton';
+import { useAccount } from 'wagmi';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-hot-toast';
+import { useTopRoasts } from '../../contracts/hooks/useTopRoasts';
 
 interface RoastDisplayProps {
   isConnected: boolean;
@@ -11,11 +16,21 @@ interface RoastDisplayProps {
 }
 
 export function RoastDisplay({ isConnected, isLoading, roastText, onGenerate }: RoastDisplayProps) {
-  const [isMinting, setIsMinting] = useState(false);
+  const router = useRouter();
+  const { topRoasts, isLoading: topRoastsLoading, error } = useTopRoasts();
 
   if (!isConnected) {
     return null;
   }
+
+  const handleMintSuccess = () => {
+    toast.success('Roast minted successfully!');
+    router.push('/leaderboard');
+  };
+
+  if (topRoastsLoading) return <div>Loading roasts...</div>;
+  if (error) return <div>Error loading roasts</div>;
+  if (!topRoasts?.length) return <div>No roasts yet</div>;
 
   return (
     <div className="space-y-6">
@@ -29,16 +44,12 @@ export function RoastDisplay({ isConnected, isLoading, roastText, onGenerate }: 
           <div className="text-2xl font-bold text-center p-6 rounded-lg bg-gray-800/50 border border-gray-700">
             {roastText}
           </div>
-          
+
           <div className="flex justify-center gap-4">
-            <button
-              onClick={() => setIsMinting(true)}
-              disabled={isMinting}
-              className="px-12 py-3 bg-gradient-to-r from-pink-500 to-violet-500 rounded-full font-semibold hover:opacity-90 disabled:opacity-50 text-lg"
-            >
-              Mint as NFT
-            </button>
-            
+            <MintButton
+              roastText={roastText}
+              onSuccess={handleMintSuccess}
+            />
             <ShareButton roastText={roastText} />
           </div>
         </>
