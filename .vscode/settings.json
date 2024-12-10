@@ -1,0 +1,13 @@
+{
+    "files.exclude": {
+        "**/node_modules": true,
+        "**/.git": true,
+        "**/.next": true,
+        "**/dist": true,
+        "**/build": true,
+        "**/coverage": true,
+        "**/.turbo": true,
+        "**/cache": true
+    },
+    "editor.formatOnSave": true,
+}
