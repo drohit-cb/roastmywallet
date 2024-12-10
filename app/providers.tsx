@@ -23,8 +23,6 @@ const config = createConfig({
 });
 
 export function Providers(props: { children: ReactNode }) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>

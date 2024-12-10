@@ -1,9 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { ShareButton } from './ShareButton';
 import { MintButton } from './MintButton';
-import { useAccount } from 'wagmi';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { useTopRoasts } from '../../contracts/hooks/useTopRoasts';
