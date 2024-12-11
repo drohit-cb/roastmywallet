@@ -2,6 +2,8 @@
 import React from 'react';
 import { useState } from 'react';
 import { useRoastNFT } from '../../contracts/hooks/useRoastNFT';
+import { toast } from 'react-hot-toast';
+import { trackEvent, events } from '@/lib/analytics';
 
 interface MintButtonProps {
     roastText: string;
@@ -18,8 +20,14 @@ export function MintButton({ roastText, onSuccess }: MintButtonProps) {
         setIsLoading(true);
         try {
             await mintRoast(roastText);
+            toast.success('Roast minted successfully! 🎉');
+            trackEvent(events.ROAST_MINTED, {
+                roastText,
+                timestamp: new Date().toISOString()
+            });
             onSuccess?.();
         } catch (error) {
+            toast.error('Failed to mint roast');
             console.error('Failed to mint roast:', error);
         } finally {
             setIsLoading(false);

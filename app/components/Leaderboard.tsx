@@ -5,6 +5,7 @@ import { formatAddress } from '../../lib/utils';
 import { Avatar } from '@coinbase/onchainkit/identity';
 import { useLikeRoast } from '../../contracts/hooks/useLikeRoast';
 import { toast } from 'react-hot-toast';
+import { trackEvent, events } from '@/lib/analytics';
 
 export function Leaderboard() {
     const { topRoasts, isLoading, error, refetch } = useTopRoasts(10);
@@ -12,16 +13,20 @@ export function Leaderboard() {
     const { likeRoast } = useLikeRoast(() => {
         // Refetch leaderboard when like transaction succeeds
         refetch();
-        toast.success('Roast liked!');
     });
 
     const handleLike = async (tokenId: bigint) => {
         try {
             await likeRoast(tokenId);
-            toast.success('Liking roast...');
+            trackEvent(events.ROAST_LIKED, {
+                tokenId: tokenId.toString()
+            });
         } catch (error) {
-            console.error('Failed to like:', error);
             toast.error('Failed to like roast');
+            trackEvent(events.ERROR_OCCURRED, {
+                error: error instanceof Error ? error.message : 'Unknown error',
+                action: 'like_roast'
+            });
         }
     };
 

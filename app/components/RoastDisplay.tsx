@@ -5,6 +5,7 @@ import { MintButton } from './MintButton';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { useTopRoasts } from '../../contracts/hooks/useTopRoasts';
+import { trackEvent, events } from '@/lib/analytics';
 
 interface RoastDisplayProps {
   isConnected: boolean;
@@ -22,8 +23,22 @@ export function RoastDisplay({ isConnected, isLoading, roastText, onGenerate }: 
   }
 
   const handleMintSuccess = () => {
-    toast.success('Roast minted successfully!');
     router.push('/leaderboard');
+  };
+
+  const handleGenerate = async () => {
+    try {
+      onGenerate();
+      trackEvent(events.ROAST_GENERATED, {
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      toast.error('Failed to generate roast');
+      trackEvent(events.ERROR_OCCURRED, {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        action: 'generate_roast'
+      });
+    }
   };
 
   if (topRoastsLoading) return <div>Loading roasts...</div>;
@@ -53,7 +68,7 @@ export function RoastDisplay({ isConnected, isLoading, roastText, onGenerate }: 
         </>
       ) : (
         <button
-          onClick={onGenerate}
+          onClick={handleGenerate}
           disabled={isLoading}
           className="w-full py-4 bg-gradient-to-r from-pink-500 to-violet-500 rounded-lg font-bold text-xl hover:opacity-90 disabled:opacity-50"
         >

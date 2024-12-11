@@ -1,8 +1,8 @@
 'use client';
 
-import { 
-  ConnectWallet, 
-  Wallet, 
+import {
+  ConnectWallet,
+  Wallet,
   WalletDropdown,
 } from '@coinbase/onchainkit/wallet';
 import {

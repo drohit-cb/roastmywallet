@@ -45,17 +45,17 @@ export default function Home() {
     try {
       // 1. Get wallet stats
       const walletStats = await getMockWalletStats(address!);
-      
+
       // 2. Generate roast
       const response = await fetch('/api/generate-roast', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ walletStats }),
       });
-      
+
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
-      
+
       setRoastText(data.roast);
     } catch (error) {
       console.error('Failed to generate roast:', error);
@@ -71,12 +71,12 @@ export default function Home() {
       <nav className="p-4">
         {isAuthenticated && <WalletConnect onDisconnect={handleDisconnect} />}
       </nav>
-      
+
       <main className="container mx-auto px-4 py-16">
         <h1 className="text-6xl font-bold text-center mb-8">
           Roast My <span className="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">Wallet</span>
         </h1>
-        
+
         <div className="max-w-2xl mx-auto bg-gray-800/50 rounded-xl p-8 backdrop-blur-sm">
           {!isAuthenticated ? (
             <Login onLoginComplete={() => setIsSignedIn(true)} />
@@ -85,7 +85,7 @@ export default function Home() {
               <p className="text-xl text-center text-gray-400 mb-8">
                 Ready to get roasted based on your on-chain activity!
               </p>
-              <RoastDisplay 
+              <RoastDisplay
                 isConnected={true}
                 isLoading={isLoading}
                 roastText={roastText}

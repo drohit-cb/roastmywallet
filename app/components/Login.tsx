@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAccount, useSignMessage, useDisconnect, usePublicClient } from 'wagmi';
 import { SiweMessage } from 'siwe';
 import { ConnectWallet, Wallet } from '@coinbase/onchainkit/wallet';
+import { trackEvent, events } from '@/lib/analytics';
 
 interface LoginProps {
   onLoginComplete: () => void;
@@ -22,13 +23,13 @@ export function Login({ onLoginComplete }: LoginProps) {
 
   const handleSIWE = async () => {
     if (!isConnected || !address) return;
-    
+
     setIsSigningIn(true);
     try {
       // Get nonce
       const nonceRes = await fetch('/api/auth/nonce');
       const nonce = await nonceRes.text();
-      
+
       const message = new SiweMessage({
         domain: window.location.host,
         address: address as `0x${string}`,
@@ -40,11 +41,11 @@ export function Login({ onLoginComplete }: LoginProps) {
       });
 
       const messageToSign = message.prepareMessage();
-      
+
       // Sign message
-      const signature = await signMessageAsync({ 
+      const signature = await signMessageAsync({
         message: messageToSign
-      });  
+      });
 
       const verifyRes = await fetch('/api/auth/verify', {
         method: 'POST',
@@ -62,6 +63,9 @@ export function Login({ onLoginComplete }: LoginProps) {
         throw new Error(verifyData.error || 'Error verifying message');
       }
 
+      trackEvent(events.SIGNED_IN, {
+        timestamp: new Date().toISOString()
+      });
       onLoginComplete();
     } catch (error) {
       console.error('Failed to sign and verify message:', error);
@@ -76,21 +80,21 @@ export function Login({ onLoginComplete }: LoginProps) {
       <div className="text-center">
         <h2 className="text-2xl font-bold mb-2">Welcome to RoastMyWallet</h2>
         <p className="text-gray-400">
-          {isSigningIn 
-            ? 'Signing in...' 
+          {isSigningIn
+            ? 'Signing in...'
             : 'Connect your wallet to start getting roasted'}
         </p>
       </div>
 
       <Wallet>
-        <ConnectWallet 
+        <ConnectWallet
           onConnect={handleSIWE}
           aria-label="Connect Wallet"
         />
       </Wallet>
 
       <p className="text-sm text-gray-400 max-w-md text-center" aria-live="polite">
-        By connecting, you will sign a message to verify wallet ownership. 
+        By connecting, you will sign a message to verify wallet ownership.
         No transaction fees involved.
       </p>
     </div>
