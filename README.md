@@ -47,18 +47,13 @@ Deployed on Vercel with the following environment variables:
 
 ### Features
 - [ ] Implement actual wallet analytics
-- [ ] Integrate with a LLM to power roast generation
-- [ ] Add NFT minting capability
-- [ ] Build leaderboard for top roasts
-- [ ] Add social sharing functionality
+- [ ] First time user tutorial
+- [ ] Sorted leaderboard
 
 ### Technical Improvements
 - [ ] Add proper error handling for wallet connections
-- [ ] Implement persistent sessions
-- [ ] Add loading states and better UX
 
 ### Known Issues
-- Session persistence needs improvement
 - SIWE implementation needs refinement
 - Better error handling needed for RPC failures
 

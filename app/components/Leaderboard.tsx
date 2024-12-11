@@ -7,10 +7,11 @@ import { useLikeRoast } from '../../contracts/hooks/useLikeRoast';
 import { toast } from 'react-hot-toast';
 
 export function Leaderboard() {
-    const { topRoasts, isLoading, error } = useTopRoasts(10);
+    const { topRoasts, isLoading, error, refetch } = useTopRoasts(10);
 
     const { likeRoast } = useLikeRoast(() => {
-        // Success is handled in the hook now
+        // Refetch leaderboard when like transaction succeeds
+        refetch();
         toast.success('Roast liked!');
     });
 

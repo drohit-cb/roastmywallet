@@ -17,9 +17,7 @@ export function MintButton({ roastText, onSuccess }: MintButtonProps) {
 
         setIsLoading(true);
         try {
-            console.log('Starting mint...');
-            const hash = await mintRoast(roastText);
-            console.log('Mint result:', hash);
+            await mintRoast(roastText);
             onSuccess?.();
         } catch (error) {
             console.error('Failed to mint roast:', error);

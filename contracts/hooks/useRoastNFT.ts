@@ -11,11 +11,6 @@ export function useRoastNFT() {
         try {
             if (!writeContractAsync) throw new Error('Contract write not ready');
 
-            console.log('address', ROAST_NFT_ADDRESS);
-            console.log('abi', ROAST_NFT_ABI);
-            console.log('functionName', 'mintRoast');
-            console.log('args', [text]);
-
             const hash = await writeContractAsync({
                 address: ROAST_NFT_ADDRESS as `0x${string}`,
                 abi: ROAST_NFT_ABI,
