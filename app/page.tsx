@@ -3,12 +3,13 @@
 import { Login } from './components/Login';
 import { RoastDisplay } from './components/RoastDisplay';
 import { WalletConnect } from './components/WalletConnect';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import { useState, useEffect, useCallback } from 'react';
-import { getMockWalletStats } from '@/lib/mockWalletStats';
+import { base, baseSepolia } from 'viem/chains';
 
 export default function Home() {
   const { isConnected, address } = useAccount();
+  const chainId = useChainId();
   const [isLoading, setIsLoading] = useState(false);
   const [roastText, setRoastText] = useState<string>();
   const [isSignedIn, setIsSignedIn] = useState(false);
@@ -43,14 +44,14 @@ export default function Home() {
   const generateRoast = async () => {
     setIsLoading(true);
     try {
-      // 1. Get wallet stats
-      const walletStats = await getMockWalletStats(address!);
-
-      // 2. Generate roast
+      // Call generate api to generate roast for given address
       const response = await fetch('/api/roasts/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ walletStats }),
+        body: JSON.stringify({
+          address,
+          network: chainId === 84532 ? baseSepolia.network : 'base-mainnet'
+        }),
       });
 
       const data = await response.json();
