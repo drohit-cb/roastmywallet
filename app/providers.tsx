@@ -18,7 +18,10 @@ const config = createConfig({
   },
   connectors: [
     injected(),
-    coinbaseWallet()
+    coinbaseWallet({
+      appName: 'RoastMyWallet',
+      appLogoUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/icon.png`,
+    })
   ],
 });
 
