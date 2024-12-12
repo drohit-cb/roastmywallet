@@ -68,14 +68,24 @@ export class Database {
         return result[0] as Roast;
     }
 
-    async getTopRoasts(network: string, limit = 10) {
+    async getTopRoasts(network: string, page = 1, limit = 10) {
+        const offset = (page - 1) * limit;
         const result = await this.sql`
             SELECT * FROM roasts
             WHERE network = ${network}
-            ORDER BY likes_count DESC
-            LIMIT ${limit};
+            ORDER BY likes_count DESC, block_timestamp DESC
+            LIMIT ${limit} 
+            OFFSET ${offset};
         `;
         return result as Roast[];
+    }
+
+    async getTotalRoasts(network: string): Promise<number> {
+        const result = await this.sql`
+            SELECT COUNT(*) as count FROM roasts
+            WHERE network = ${network};
+        `;
+        return result[0].count;
     }
 
     async getIndexerState(network: string): Promise<IndexerState | null> {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { formatAddress } from '../../lib/utils';
 import { Avatar } from '@coinbase/onchainkit/identity';
 import { useLikeRoast } from '../../contracts/hooks/useLikeRoast';
@@ -13,14 +13,50 @@ import { baseSepolia } from 'viem/chains';
 export function Leaderboard() {
     const { address, } = useAccount();
     const [topRoasts, setTopRoasts] = useState<Roast[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const observerTarget = useRef<HTMLDivElement>(null);
+
+    const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
+        const [target] = entries;
+        if (target.isIntersecting && !isLoadingMore && hasMore) {
+            loadRoasts(page + 1);
+        }
+    }, [isLoadingMore, hasMore, page]);
 
     useEffect(() => {
-        fetch('/api/roasts/top')
-            .then(res => res.json())
-            .then(data => setTopRoasts(data))
-            .finally(() => setIsLoading(false));
+        const element = observerTarget.current;
+        if (!element) return;
+
+        const observer = new IntersectionObserver(handleObserver, {
+            threshold: 0.5,
+        });
+
+        observer.observe(element);
+        return () => observer.unobserve(element);
+    }, [handleObserver]);
+
+    useEffect(() => {
+        loadRoasts(1);
     }, []);
+
+    const loadRoasts = async (pageNum: number) => {
+        setIsLoadingMore(true);
+        try {
+            const res = await fetch(`/api/roasts/top?page=${pageNum}`);
+            const data = await res.json();
+            if (pageNum === 1) {
+                setTopRoasts(data.roasts);
+            } else {
+                setTopRoasts(prev => [...prev, ...data.roasts]);
+            }
+            setHasMore(data.hasMore);
+            setPage(pageNum);
+        } finally {
+            setIsLoadingMore(false);
+        }
+    };
 
     const { likeRoast } = useLikeRoast(() => {
         // Refetch leaderboard when like transaction succeeds
@@ -62,14 +98,6 @@ export function Leaderboard() {
             });
         }
     };
-
-    if (isLoading) return (
-        <div className="animate-pulse space-y-4 max-w-2xl mx-auto">
-            {[...Array(5)].map((_, i) => (
-                <div key={i} className="h-24 bg-gray-800 rounded-lg"></div>
-            ))}
-        </div>
-    );
 
     if (!topRoasts?.length) return (
         <div className="text-center p-12 rounded-lg bg-gray-800/50 border border-gray-700 max-w-2xl mx-auto">
@@ -124,6 +152,15 @@ export function Leaderboard() {
                     </div>
                 </div>
             ))}
+            {hasMore && (
+                <div ref={observerTarget} className="h-10">
+                    {isLoadingMore && (
+                        <div className="animate-pulse space-y-4">
+                            <div className="h-24 bg-gray-800 rounded-lg"></div>
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 } 
