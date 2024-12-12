@@ -99,6 +99,13 @@ export function Leaderboard() {
         }
     };
 
+    const shareToX = (roast: Roast) => {
+        const shareUrl = `${window.location.origin}/roast/${roast.token_id}`;
+        const text = `Check out this roast on RoastMyWallet! 🔥`;
+        const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl)}`;
+        window.open(url, '_blank');
+    };
+
     if (!topRoasts?.length) return (
         <div className="text-center p-12 rounded-lg bg-gray-800/50 border border-gray-700 max-w-2xl mx-auto">
             <h3 className="text-2xl font-bold mb-2">No Roasts Yet 🔥</h3>
@@ -142,13 +149,23 @@ export function Leaderboard() {
                         <span className="text-gray-500">
                             {new Date(roast.block_timestamp).toLocaleDateString()}
                         </span>
-                        <button
-                            onClick={() => handleLike(roast.token_id.toString())}
-                            className="flex items-center gap-1 bg-pink-500/10 hover:bg-pink-500/20 text-pink-500 px-3 py-1 rounded-full transition-colors"
-                        >
-                            <span>❤️</span>
-                            <span>{roast.likes_count.toString()}</span>
-                        </button>
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={() => shareToX(roast)}
+                                className="flex items-center gap-1 text-blue-400 hover:text-blue-300"
+                            >
+                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                                </svg>
+                            </button>
+                            <button
+                                onClick={() => handleLike(roast.token_id.toString())}
+                                className="flex items-center gap-1 bg-pink-500/10 hover:bg-pink-500/20 text-pink-500 px-3 py-1 rounded-full transition-colors"
+                            >
+                                <span>❤️</span>
+                                <span>{roast.likes_count.toString()}</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             ))}

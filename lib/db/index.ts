@@ -114,4 +114,14 @@ export class Database {
             ON CONFLICT (network, roast_token_id, liker_address) DO NOTHING;
         `;
     }
+
+    async getRoast(network: string, tokenId: string): Promise<Roast | null> {
+        const result = await this.sql`
+            SELECT * FROM roasts
+            WHERE network = ${network}
+            AND token_id = ${tokenId}
+            LIMIT 1;
+        `;
+        return result[0] as Roast || null;
+    }
 }
