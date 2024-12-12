@@ -14,7 +14,8 @@
     "deploy:sepolia": "yarn hardhat run scripts/deploy.ts --network base-sepolia",
     "verify:sepolia": "yarn hardhat verify --network base-sepolia",
     "db:migrate": "npx tsx scripts/db-migrate.mts",
-    "indexer:test": "npx tsx scripts/test-indexer.mts"
+    "indexer:test": "npx tsx scripts/test-indexer.mts",
+    "roast": "npx tsx scripts/generate-roast.mts"
   },
   "dependencies": {
     "@coinbase/onchainkit": "^0.35.8",
