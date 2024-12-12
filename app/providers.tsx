@@ -23,6 +23,7 @@ const config = createConfig({
       appLogoUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/icon.png`,
     })
   ],
+  ssr: true,
 });
 
 export function Providers(props: { children: ReactNode }) {
