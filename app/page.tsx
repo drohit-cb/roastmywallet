@@ -47,7 +47,7 @@ export default function Home() {
       const walletStats = await getMockWalletStats(address!);
 
       // 2. Generate roast
-      const response = await fetch('/api/generate-roast', {
+      const response = await fetch('/api/roasts/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ walletStats }),

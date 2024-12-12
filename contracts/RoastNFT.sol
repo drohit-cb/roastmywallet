@@ -20,7 +20,7 @@ contract RoastNFT is ERC721, Ownable {
 
     // Events
     event RoastMinted(uint256 tokenId, address wallet, string roastText);
-    event RoastLiked(uint256 tokenId, address liker);
+    event RoastLiked(uint256 indexed tokenId, address indexed liker, uint256 totalLikes);
 
     constructor() ERC721("RoastMyWallet", "ROAST") Ownable(msg.sender) {}
 
@@ -43,30 +43,17 @@ contract RoastNFT is ERC721, Ownable {
 
     function likeRoast(uint256 tokenId) external {
         require(tokenId <= totalRoasts, "Roast doesn't exist");
-        require(!hasLiked[tokenId][msg.sender], "Already liked");
+        require(!hasLiked[tokenId][msg.sender], "Already liked this roast");
         require(msg.sender != roasts[tokenId].wallet, "Can't like own roast");
-
+        
         hasLiked[tokenId][msg.sender] = true;
         roasts[tokenId].likes += 1;
 
-        emit RoastLiked(tokenId, msg.sender);
+        emit RoastLiked(tokenId, msg.sender, roasts[tokenId].likes);
     }
 
     function getRoast(uint256 tokenId) external view returns (RoastEntry memory) {
         require(tokenId <= totalRoasts, "Roast doesn't exist");
         return roasts[tokenId];
-    }
-
-    function getTopRoasts(uint256 limit) external view returns (RoastEntry[] memory) {
-        uint256 count = totalRoasts < limit ? totalRoasts : limit;
-        RoastEntry[] memory topRoasts = new RoastEntry[](count);
-        
-        // Basic implementation - returns latest N roasts
-        // TODO: Implement proper sorting by likes
-        for(uint256 i = 0; i < count; i++) {
-            topRoasts[i] = roasts[totalRoasts - i];
-        }
-        
-        return topRoasts;
     }
 } 

@@ -54,7 +54,6 @@ export interface RoastNFTInterface extends Interface {
       | "balanceOf"
       | "getApproved"
       | "getRoast"
-      | "getTopRoasts"
       | "hasLiked"
       | "isApprovedForAll"
       | "likeRoast"
@@ -99,10 +98,6 @@ export interface RoastNFTInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getRoast",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTopRoasts",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -173,10 +168,6 @@ export interface RoastNFTInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getRoast", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getTopRoasts",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "hasLiked", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
@@ -278,11 +269,20 @@ export namespace OwnershipTransferredEvent {
 }
 
 export namespace RoastLikedEvent {
-  export type InputTuple = [tokenId: BigNumberish, liker: AddressLike];
-  export type OutputTuple = [tokenId: bigint, liker: string];
+  export type InputTuple = [
+    tokenId: BigNumberish,
+    liker: AddressLike,
+    totalLikes: BigNumberish
+  ];
+  export type OutputTuple = [
+    tokenId: bigint,
+    liker: string,
+    totalLikes: bigint
+  ];
   export interface OutputObject {
     tokenId: bigint;
     liker: string;
+    totalLikes: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -386,12 +386,6 @@ export interface RoastNFT extends BaseContract {
   getRoast: TypedContractMethod<
     [tokenId: BigNumberish],
     [RoastNFT.RoastEntryStructOutput],
-    "view"
-  >;
-
-  getTopRoasts: TypedContractMethod<
-    [limit: BigNumberish],
-    [RoastNFT.RoastEntryStructOutput[]],
     "view"
   >;
 
@@ -502,13 +496,6 @@ export interface RoastNFT extends BaseContract {
   ): TypedContractMethod<
     [tokenId: BigNumberish],
     [RoastNFT.RoastEntryStructOutput],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "getTopRoasts"
-  ): TypedContractMethod<
-    [limit: BigNumberish],
-    [RoastNFT.RoastEntryStructOutput[]],
     "view"
   >;
   getFunction(
@@ -684,7 +671,7 @@ export interface RoastNFT extends BaseContract {
       OwnershipTransferredEvent.OutputObject
     >;
 
-    "RoastLiked(uint256,address)": TypedContractEvent<
+    "RoastLiked(uint256,address,uint256)": TypedContractEvent<
       RoastLikedEvent.InputTuple,
       RoastLikedEvent.OutputTuple,
       RoastLikedEvent.OutputObject

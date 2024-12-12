@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { WalletStats } from '@/lib/mockWalletStats';
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
@@ -9,8 +11,9 @@ const openai = new OpenAI({
 export async function POST(req: Request) {
   try {
     const { walletStats } = await req.json();
+
     const prompt = createPrompt(walletStats);
-    
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -28,8 +31,10 @@ export async function POST(req: Request) {
     });
 
     const roast = completion.choices[0].message.content;
+    // Until OpenAPI comes back online.
+    // const roast = generateRandomSentence();
     return NextResponse.json({ roast });
-    
+
   } catch (error) {
     console.error('Roast generation failed:', error);
     return NextResponse.json(
@@ -37,6 +42,17 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
+}
+
+function generateRandomSentence(): string {
+  const adjectives = ['crazy', 'wild', 'silly', 'funky', 'bizarre', 'wacky'];
+  const nouns = ['wallet', 'trader', 'paper hands', 'diamond hands', 'ape', 'degen'];
+  const verbs = ['YOLOs', 'trades', 'buys', 'sells', 'fumbles', 'apes into'];
+  const objects = ['NFTs', 'shitcoins', 'memecoins', 'tokens', 'jpegs', 'rugs'];
+
+  const randomWord = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)];
+
+  return `The ${randomWord(adjectives)} ${randomWord(nouns)} ${randomWord(verbs)} ${randomWord(objects)}`;
 }
 
 function createPrompt(stats: WalletStats): string {

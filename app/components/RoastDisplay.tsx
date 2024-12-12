@@ -4,7 +4,6 @@ import { ShareButton } from './ShareButton';
 import { MintButton } from './MintButton';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
-import { useTopRoasts } from '../../contracts/hooks/useTopRoasts';
 import { trackEvent, events } from '@/lib/analytics';
 
 interface RoastDisplayProps {
@@ -16,7 +15,6 @@ interface RoastDisplayProps {
 
 export function RoastDisplay({ isConnected, isLoading, roastText, onGenerate }: RoastDisplayProps) {
   const router = useRouter();
-  const { topRoasts, isLoading: topRoastsLoading, error } = useTopRoasts();
 
   if (!isConnected) {
     return null;
@@ -40,10 +38,6 @@ export function RoastDisplay({ isConnected, isLoading, roastText, onGenerate }: 
       });
     }
   };
-
-  if (topRoastsLoading) return <div>Loading roasts...</div>;
-  if (error) return <div>Error loading roasts</div>;
-  if (!topRoasts?.length) return <div>No roasts yet</div>;
 
   return (
     <div className="space-y-6">

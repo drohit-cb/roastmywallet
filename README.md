@@ -42,15 +42,45 @@ Deployed on Vercel with the following environment variables:
 - `NEXT_PUBLIC_ONCHAINKIT_API_KEY`
 - `IRON_PASSWORD`
 - `MAINNET_RPC_URL`
+- `NEXT_PUBLIC_BASE_URL`
+- `OPENAI_API_KEY`
+- `PRIVATE_KEY`
+- `BASESCAN_API_KEY`
+
+## Contract Deployment
+
+1. Compile contract:
+```bash
+yarn contract:compile
+```
+
+2. Deploy to Base Sepolia:
+```bash
+yarn deploy:sepolia
+```
+
+3. Verify contract:
+```bash
+yarn verify:sepolia <DEPLOYED_CONTRACT_ADDRESS>
+```
+
+Required environment variables for deployment:
+- `BASE_SEPOLIA_RPC_URL`: Base Sepolia RPC URL
+- `PRIVATE_KEY`: Deployer wallet private key
+- `BASESCAN_API_KEY`: For contract verification
 
 ## TODO / Next Steps
 
 ### Features
 - [ ] Implement actual wallet analytics
-- [ ] First time user tutorial
-- [ ] Sorted leaderboard
+- [ ] Sorted leaderboard based on likes. Implement a mini indexer that enables this.
+- [ ] UI tags on hottest roasts, most liked roasts, etc.
+- [ ] First time user tutorial, using sound and animation more better user engagement
+- [ ] Ability to share a roast card from leaderboard
+- [ ] NFT metadata
 
 ### Technical Improvements
+- [ ] Simplify contract, add tests, comments and make it upgradable
 - [ ] Add proper error handling for wallet connections
 
 ### Known Issues
@@ -70,9 +100,14 @@ Get a specific roast:
 cast call <CONTRACT_ADDRESS> "getRoast(uint256)(tuple(uint256,address,uint256,string,uint256))" <TOKEN_ID> --rpc-url https://sepolia.base.org
 ```
 
-Get top roasts:
+Get total roasts:
 ```bash
-cast call <CONTRACT_ADDRESS> "getTopRoasts(uint256)(tuple(uint256,address,uint256,string,uint256)[])" <LIMIT> --rpc-url https://sepolia.base.org
+cast call <CONTRACT_ADDRESS> "totalRoasts()(uint256)" --rpc-url https://sepolia.base.org
+```
+
+Check if address has liked a roast:
+```bash
+cast call <CONTRACT_ADDRESS> "hasLiked(uint256,address)(bool)" <TOKEN_ID> <ADDRESS> --rpc-url https://sepolia.base.org
 ```
 
 ### Write Functions
@@ -90,7 +125,11 @@ cast send <CONTRACT_ADDRESS> "likeRoast(uint256)" <TOKEN_ID> --rpc-url https://s
 Replace:
 - `<CONTRACT_ADDRESS>` with the deployed contract address
 - `<TOKEN_ID>` with the ID of the roast
-- `<LIMIT>` with how many top roasts to retrieve
+- `<ADDRESS>` with a wallet address to check
 - `<YOUR_PRIVATE_KEY>` with your wallet's private key (never share this!)
 
-Note: For write functions (mintRoast and likeRoast), you'll need Base Sepolia testnet ETH. Get some from the [Base Sepolia faucet](https://portal.cdp.coinbase.com/products/faucet).
+Note: 
+- Roast IDs start from 1
+- Can't like your own roasts
+- Can't like a roast more than once
+- Need Base Sepolia testnet ETH from [Base Sepolia faucet](https://portal.cdp.coinbase.com/products/faucet)

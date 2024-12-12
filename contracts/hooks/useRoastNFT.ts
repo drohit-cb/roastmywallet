@@ -18,7 +18,6 @@ export function useRoastNFT() {
                 args: [text]
             });
 
-            console.log('Transaction sent:', hash);
             return hash;
         } catch (error) {
             console.error('Mint error:', error);

@@ -12,13 +12,17 @@
     "contract:test": "yarn hardhat test",
     "contract:coverage": "yarn hardhat coverage",
     "deploy:sepolia": "yarn hardhat run scripts/deploy.ts --network base-sepolia",
-    "verify:sepolia": "yarn hardhat verify --network base-sepolia"
+    "verify:sepolia": "yarn hardhat verify --network base-sepolia",
+    "db:migrate": "npx tsx scripts/db-migrate.mts",
+    "indexer:test": "npx tsx scripts/test-indexer.mts"
   },
   "dependencies": {
     "@coinbase/onchainkit": "^0.35.8",
+    "@neondatabase/serverless": "^0.10.4",
     "@vercel/analytics": "^1.4.1",
     "@vercel/og": "^0.6.4",
     "@vercel/speed-insights": "^1.1.0",
+    "dotenv": "^16.4.7",
     "ethers": "^6.13.4",
     "iron-session": "^8.0.4",
     "next": "15.0.3",

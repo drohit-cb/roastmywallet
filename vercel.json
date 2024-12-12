@@ -7,10 +7,25 @@
     {
       "source": "/api/(.*)",
       "headers": [
-        { "key": "Access-Control-Allow-Credentials", "value": "true" },
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET,POST" }
+        {
+          "key": "Access-Control-Allow-Credentials",
+          "value": "true"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET,POST"
+        }
       ]
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron?secret=8/KMCHqk60wYceh4tuIOM+DDXeeleJ8WXnM9a0mFreI=",
+      "schedule": "*/1 * * * *"
+    }
   ]
-} 
+}
