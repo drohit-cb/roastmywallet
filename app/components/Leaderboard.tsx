@@ -13,6 +13,7 @@ import { baseSepolia } from 'viem/chains';
 export function Leaderboard() {
     const { address, } = useAccount();
     const [topRoasts, setTopRoasts] = useState<Roast[]>([]);
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -38,7 +39,9 @@ export function Leaderboard() {
     }, [handleObserver]);
 
     useEffect(() => {
-        loadRoasts(1);
+        loadRoasts(1).finally(() => {
+            setIsInitialLoading(false);
+        });
     }, []);
 
     const loadRoasts = async (pageNum: number) => {
@@ -62,7 +65,11 @@ export function Leaderboard() {
         // Refetch leaderboard when like transaction succeeds
         fetch('/api/roasts/top')
             .then(res => res.json())
-            .then(data => setTopRoasts(data));
+            .then(data => {
+                setTopRoasts(data.roasts);
+                setHasMore(data.hasMore);
+                setPage(1); // Reset to first page after like
+            });
     });
 
     const handleLike = async (tokenId: string) => {
@@ -87,7 +94,9 @@ export function Leaderboard() {
             // Refetch leaderboard
             const res = await fetch('/api/roasts/top');
             const data = await res.json();
-            setTopRoasts(data);
+            setTopRoasts(data.roasts);
+            setHasMore(data.hasMore);
+            setPage(1); // Reset to first page after like
 
             trackEvent(events.ROAST_LIKED, { tokenId });
         } catch (error) {
@@ -106,14 +115,42 @@ export function Leaderboard() {
         window.open(url, '_blank');
     };
 
-    if (!topRoasts?.length) return (
-        <div className="text-center p-12 rounded-lg bg-gray-800/50 border border-gray-700 max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold mb-2">No Roasts Yet 🔥</h3>
-            <p className="text-gray-400">
-                Be the first to mint a roast and start the fire!
-            </p>
-        </div>
-    );
+    // Loading skeleton
+    if (isInitialLoading) {
+        return (
+            <div className="space-y-6 max-w-2xl mx-auto">
+                {[...Array(3)].map((_, i) => (
+                    <div key={i} className="animate-pulse">
+                        <div className="p-6 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl border border-gray-700/50">
+                            <div className="flex items-start gap-4">
+                                <div className="w-12 h-12 bg-gray-700 rounded-full" />
+                                <div className="flex-1">
+                                    <div className="h-4 bg-gray-700 rounded w-1/4 mb-4" />
+                                    <div className="h-4 bg-gray-700 rounded w-3/4" />
+                                </div>
+                            </div>
+                            <div className="mt-4 flex justify-between">
+                                <div className="h-4 bg-gray-700 rounded w-1/4" />
+                                <div className="h-4 bg-gray-700 rounded w-16" />
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
+    // No roasts state
+    if (!topRoasts?.length) {
+        return (
+            <div className="text-center p-12 rounded-lg bg-gray-800/50 border border-gray-700 max-w-2xl mx-auto">
+                <h3 className="text-2xl font-bold mb-2">No Roasts Yet 🔥</h3>
+                <p className="text-gray-400">
+                    Be the first to mint a roast and start the fire!
+                </p>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6 max-w-2xl mx-auto">
