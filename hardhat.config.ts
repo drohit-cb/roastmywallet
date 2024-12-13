@@ -24,10 +24,13 @@ const config = {
             }
         ]
     },
+    sourcify: {
+        enabled: true
+    },
     typechain: {
         outDir: 'contracts/typechain-types',
         target: 'ethers-v6'
-    }
+    },
 };
 
 module.exports = config;
