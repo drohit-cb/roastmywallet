@@ -3,8 +3,6 @@ import { baseSepolia } from 'viem/chains';
 import { Database } from '../../lib/db';
 import { ROAST_NFT_ADDRESS } from '../../contracts/lib/RoastNFT';
 
-let isIndexing = false;
-
 interface IndexerConfig {
     databaseUrl: string;
     rpcUrl: string;
@@ -99,6 +97,9 @@ async function processBlockRange(
             })
         ].filter(Boolean));
 
+        // Update indexer state after each batch
+        await db.updateIndexerState(baseSepolia.network, Number(end));
+
         console.log(`Processed blocks ${current} to ${end}. Remaining: ${toBlock - end}. Mints: ${mintCount}, Likes: ${likeCount}`);
         current = end + 1n;
     }
@@ -107,13 +108,6 @@ async function processBlockRange(
 }
 
 export async function indexNewBlocks({ databaseUrl, rpcUrl, startFromBlock }: IndexerConfig) {
-    if (isIndexing) {
-        console.log('Indexing already in progress');
-        return;
-    }
-
-    isIndexing = true;
-
     try {
         const db = new Database(databaseUrl);
         const client = createPublicClient({
@@ -126,7 +120,7 @@ export async function indexNewBlocks({ databaseUrl, rpcUrl, startFromBlock }: In
         if (startFromBlock !== undefined) {
             fromBlock = startFromBlock;
         } else {
-            const state = await db.getIndexerState(baseSepolia.name);
+            const state = await db.getIndexerState(baseSepolia.network);
             fromBlock = state ? BigInt(state.last_processed_block) : BigInt(0);
             console.log(`Starting from block ${fromBlock}`);
         }
@@ -143,15 +137,10 @@ export async function indexNewBlocks({ databaseUrl, rpcUrl, startFromBlock }: In
             currentBlock
         );
 
-        // Update indexer state in DB
-        await db.updateIndexerState(baseSepolia.name, Number(currentBlock));
-
         console.log(`Indexed ${currentBlock - fromBlock} blocks. Found ${mintCount} mints and ${likeCount} likes`);
 
     } catch (error) {
         console.error('Indexing error:', error);
-    } finally {
-        isIndexing = false;
     }
 }
 
