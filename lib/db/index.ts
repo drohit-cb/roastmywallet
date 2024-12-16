@@ -124,4 +124,26 @@ export class Database {
         `;
         return result[0] as Roast || null;
     }
+
+    async getRoastsByWallet(network: string, walletAddress: string): Promise<Roast[]> {
+        try {
+            const result = await this.sql`
+                WITH RankedRoasts AS (
+                    SELECT *,
+                        ROW_NUMBER() OVER (ORDER BY likes_count DESC, block_timestamp DESC) as rank,
+                        COUNT(*) OVER () as total_count
+                    FROM roasts
+                    WHERE network = ${network}
+                )
+                SELECT *
+                FROM RankedRoasts
+                WHERE wallet_address = ${walletAddress}
+                ORDER BY likes_count DESC, block_timestamp DESC;
+            `;
+
+            return result as (Roast & { rank: number, total_count: number })[];
+        } catch (error) {
+            throw error;
+        }
+    }
 }
