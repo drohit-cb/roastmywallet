@@ -107,16 +107,20 @@ async function processBlockRange(
 }
 
 export async function indexNewBlocks({ databaseUrl, rpcUrl, startFromBlock }: IndexerConfig) {
-    if (isIndexing) return;
+    if (isIndexing) {
+        console.log('Indexing already in progress');
+        return;
+    }
+
     isIndexing = true;
 
-    const db = new Database(databaseUrl);
-    const client = createPublicClient({
-        chain: baseSepolia,
-        transport: http(rpcUrl)
-    });
-
     try {
+        const db = new Database(databaseUrl);
+        const client = createPublicClient({
+            chain: baseSepolia,
+            transport: http(rpcUrl)
+        });
+
         // Use override if provided, otherwise get from DB
         let fromBlock: bigint;
         if (startFromBlock !== undefined) {
@@ -124,6 +128,7 @@ export async function indexNewBlocks({ databaseUrl, rpcUrl, startFromBlock }: In
         } else {
             const state = await db.getIndexerState(baseSepolia.name);
             fromBlock = state ? BigInt(state.last_processed_block) : BigInt(0);
+            console.log(`Starting from block ${fromBlock}`);
         }
 
         const currentBlock = await client.getBlockNumber();
@@ -158,6 +163,5 @@ if (process.env.VERCEL_ENV === 'production') {
         rpcUrl: process.env.BASE_SEPOLIA_RPC_URL!
         // No startFromBlock in production - always use DB state
     };
-    setInterval(() => indexNewBlocks(config), 12000);
-    indexNewBlocks(config);
+    indexNewBlocks(config);  // Run once per cron job invocation
 }
